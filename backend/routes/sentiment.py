@@ -9,7 +9,7 @@ import re
 
 from flask import Blueprint, jsonify, request
 
-from app import cache
+from extensions import cache
 from config import config
 from services.news_scraper import fetch_news
 from services.reddit_scraper import fetch_reddit_posts
@@ -43,8 +43,16 @@ def get_sentiment(ticker: str):
     with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
         fut_reddit = executor.submit(fetch_reddit_posts, ticker)
         fut_news = executor.submit(fetch_news, ticker)
-        reddit_posts = fut_reddit.result()
-        news_articles = fut_news.result()
+        try:
+            reddit_posts = fut_reddit.result()
+        except Exception as exc:
+            logger.error("Reddit fetch failed for %s: %s", ticker, exc)
+            reddit_posts = []
+        try:
+            news_articles = fut_news.result()
+        except Exception as exc:
+            logger.error("News fetch failed for %s: %s", ticker, exc)
+            news_articles = []
 
     all_items = reddit_posts + news_articles
 

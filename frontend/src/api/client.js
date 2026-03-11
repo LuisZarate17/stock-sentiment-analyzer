@@ -6,11 +6,17 @@ const BASE = "/api";
 
 async function fetchJSON(url) {
   const res = await fetch(url);
-  const data = await res.json();
   if (!res.ok) {
-    throw new Error(data.error || `HTTP ${res.status}`);
+    let msg = `HTTP ${res.status}`;
+    try {
+      const data = await res.json();
+      msg = data.error || msg;
+    } catch (_) {
+      // backend returned non-JSON (e.g. HTML error page)
+    }
+    throw new Error(msg);
   }
-  return data;
+  return res.json();
 }
 
 /**

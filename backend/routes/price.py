@@ -9,7 +9,7 @@ import re
 
 from flask import Blueprint, jsonify, request
 
-from app import cache
+from extensions import cache
 from config import config
 from services.price_fetcher import fetch_price_data
 
@@ -38,6 +38,9 @@ def get_price(ticker: str):
         data = fetch_price_data(ticker, period=period, interval=interval)
     except ValueError as exc:
         return jsonify({"error": str(exc)}), 404
+    except Exception as exc:
+        logger.exception("Unexpected error fetching price for %s", ticker)
+        return jsonify({"error": "Failed to fetch price data. Please try again."}), 500
 
     cache.set(cache_key, data, timeout=config.PRICE_CACHE_TIMEOUT)
     return jsonify(data)

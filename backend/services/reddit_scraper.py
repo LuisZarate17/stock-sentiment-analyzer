@@ -72,8 +72,8 @@ def fetch_reddit_posts(ticker: str) -> list[dict[str, Any]]:
                     "subreddit": str(submission.subreddit),
                 }
             )
-    except PRAWException as exc:
-        logger.error("PRAW error fetching Reddit posts: %s", exc)
+    except Exception as exc:
+        logger.error("Reddit scraping error for %s: %s", ticker, exc)
 
     logger.info("Fetched %d Reddit posts for %s", len(results), ticker)
     return results

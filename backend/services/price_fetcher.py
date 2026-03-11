@@ -41,6 +41,11 @@ def fetch_price_data(
     # Serialise DatetimeIndex → ISO date strings
     dates = df.index.strftime("%Y-%m-%d").tolist()
 
+    try:
+        currency = t.fast_info["currency"] or "USD"
+    except Exception:
+        currency = "USD"
+
     return {
         "ticker": ticker_upper,
         "dates": dates,
@@ -48,8 +53,8 @@ def fetch_price_data(
         "high": [round(v, 4) for v in df["High"].tolist()],
         "low": [round(v, 4) for v in df["Low"].tolist()],
         "close": [round(v, 4) for v in df["Close"].tolist()],
-        "volume": [int(v) for v in df["Volume"].tolist()],
+        "volume": [int(v) if v == v else 0 for v in df["Volume"].tolist()],
         "period": period,
         "interval": interval,
-        "currency": t.fast_info.get("currency", "USD"),
+        "currency": currency,
     }
