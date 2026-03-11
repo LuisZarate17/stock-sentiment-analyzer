@@ -1,0 +1,10 @@
+# FinBERT optional dependencies.
+# Only needed if you want to use the FinBERT model toggle in the UI.
+# Install with: pip install -r requirements-finbert.txt
+#
+# PyTorch CPU-only (~250 MB vs ~2 GB for GPU build):
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+# Then:
+#   pip install transformers==4.41.2
+
+transformers==4.41.2
